@@ -29,8 +29,8 @@ graph TD
     end
 
     subgraph Core Logic
-        E[Prediction Models <br>(XGBoost)]
-        F[Optimization Algorithm <br>(NSGA-II)]
+        E[Prediction Models (XGBoost)]
+        F[Optimization Algorithm (NSGA-II)]
     end
 
     A -- API Requests --> B
