@@ -1,0 +1,55 @@
+services:
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    command: redis-server --appendonly yes
+    volumes:
+      - redis_data:/data
+
+  api:
+    build: .
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/app
+      - ./data:/app/data
+      - ./models:/app/models
+      - ./logs:/app/logs
+    depends_on:
+      - redis
+    environment:
+      - REDIS_URL=redis://redis:6379/0
+    command: uvicorn web.api_server:app --host 0.0.0.0 --port 8000 --reload
+
+  celery:
+    build: .
+    volumes:
+      - .:/app
+      - ./data:/app/data
+      - ./models:/app/models
+      - ./logs:/app/logs
+    depends_on:
+      - redis
+      - api
+    environment:
+      - REDIS_URL=redis://redis:6379/0
+    command: celery -A web.celery_app worker --loglevel=info
+
+  dashboard:
+    build: .
+    ports:
+      - "8501:8501"
+    volumes:
+      - .:/app
+      - ./data:/app/data
+      - ./models:/app/models
+      - ./logs:/app/logs
+    depends_on:
+      - api
+    environment:
+      - API_BASE_URL=http://api:8000
+    command: streamlit run web/main.py --server.address 0.0.0.0 --server.port 8501
+
+volumes:
+  redis_data:
