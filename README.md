@@ -18,19 +18,26 @@
 
 ```mermaid
 graph TD
-    subgraph User Interface
-        A[Streamlit Dashboard]
+    A["Streamlit Dashboard"]
+    B["FastAPI Server"]
+    C["Celery Worker"]
+    D["Redis"]
+    E["Prediction Models (XGBoost)"]
+    F["Optimization Algorithm (NSGA-II)"]
+
+    subgraph "User Interface"
+        A
     end
 
-    subgraph Backend Services
-        B[FastAPI Server]
-        C[Celery Worker]
-        D[Redis]
+    subgraph "Backend Services"
+        B
+        C
+        D
     end
 
-    subgraph Core Logic
-        E[Prediction Models (XGBoost)]
-        F[Optimization Algorithm (NSGA-II)]
+    subgraph "Core Logic"
+        E
+        F
     end
 
     A -- API Requests --> B
